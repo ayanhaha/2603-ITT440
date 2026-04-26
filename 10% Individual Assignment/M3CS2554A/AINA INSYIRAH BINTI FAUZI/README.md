@@ -198,8 +198,8 @@ if __name__ == "__main__":
     multiprocessing_orders(orders)
 ```
 # 💻 Code Explanation
--**Payment & delivery classes** : Define different types of payment (QR, Online Banking, Card) and delivery (COD, Standard, Express) each with its own processing time.
--**Order(order_id)** : Represent a single order and randomly assign a payment method and delivery type.
+- **Payment & delivery classes** : Define different types of payment (QR, Online Banking, Card) and delivery (COD, Standard, Express) each with its own processing time.
+- **Order(order_id)** : Represent a single order and randomly assign a payment method and delivery type.
 - **process_order(order)** : Executes payment, packaging and delivery process for each order and return the result.
 - **sequential_orders(orders)** : Process all orders one by one without parallel execution.
 - **threading_orders(orders)** : Use ThreadPoolExecutor to process multiple orders concurrently using threads.
