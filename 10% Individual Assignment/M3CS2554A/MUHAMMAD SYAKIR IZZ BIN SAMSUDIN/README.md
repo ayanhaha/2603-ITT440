@@ -82,3 +82,63 @@ This project develops a high-performance **Parallel Mean Calculator** with a bea
 | 🥉 | Multiprocessing | 0.7490 | 0.65× | Built-in sum / 12 processes | 12 processes |
 
 ---
+## 🔬 Algorithm Design
+## Algorithm 1: Sequential Computation
+
+
+    # ── PASS 1: Manual loop sum (slow Python bytecode) ──
+    total = 0.0
+    for x in data:          
+        total += x          
+    mean = total / n
+
+    # ── PASS 2: Squared deviations (extra O(n) work) ──
+    sq_dev = 0.0
+    for x in data:          
+        diff = x - mean
+        sq_dev += diff * diff
+    variance = sq_dev / n
+
+    elapsed = time.perf_counter() - t0
+    return mean, variance, elapsed
+
+   ## Algorithm 2: Threading Computation
+   def _thread_sum_worker(chunk: list, results: dict, idx: int):
+    """Worker: Compute partial sum using C-speed built-in sum()"""
+    results[idx] = sum(chunk)   # ✅ C implementation
+
+def threaded_compute(data: list, num_threads: int) -> tuple:
+    """
+    Algorithm: Chunked data + built-in sum() per thread
+    Time Complexity: O(n)
+    Space Complexity: O(n) shared
+    """
+    n = len(data)
+    chunk_size = math.ceil(n / num_threads)
+    chunks = [data[i:i + chunk_size] for i in range(0, n, chunk_size)]
+
+    t0 = time.perf_counter()
+    results = {}
+    threads = []
+
+    # Create and start threads
+    for i, chunk in enumerate(chunks):
+        t = threading.Thread(
+            target=_thread_sum_worker,
+            args=(chunk, results, i)
+        )
+        threads.append(t)
+        t.start()
+
+    # Wait for all threads to complete
+    for t in threads:
+        t.join()
+
+    # Combine partial results
+    total = sum(results.values())
+    mean = total / n
+    elapsed = time.perf_counter() - t0
+    return mean, elapsed
+
+    
+ ## Algorithm 3: Multiprocessing Computation
